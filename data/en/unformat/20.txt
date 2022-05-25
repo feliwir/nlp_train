@@ -1,0 +1,1 @@
+remove formatting of last letter

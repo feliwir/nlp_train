@@ -1,6 +1,3 @@
-import collections
-import pathlib
-
 import tensorflow as tf
 
 from tensorflow.keras import layers
@@ -8,12 +5,13 @@ from tensorflow.keras import losses
 from tensorflow.keras import utils
 from tensorflow.keras.layers import TextVectorization
 
-import tensorflow_text as tf_text
+import tensorflow_text as text
+import tensorflow_hub as hub
 
 batch_size = 32
 seed = 42
 
-train_dir = "./data/de/"
+train_dir = "./data/en/"
 
 raw_train_ds = utils.text_dataset_from_directory(
     train_dir,
@@ -30,12 +28,8 @@ raw_val_ds = utils.text_dataset_from_directory(
     subset='validation',
     seed=seed)
 
-VOCAB_SIZE = 10000
-
-binary_vectorize_layer = TextVectorization(
-    max_tokens=VOCAB_SIZE,
-    output_mode='binary')
-
+NUM_LABELS=27
+VOCAB_SIZE = 100
 MAX_SEQUENCE_LENGTH = 250
 
 int_vectorize_layer = TextVectorization(
@@ -45,12 +39,7 @@ int_vectorize_layer = TextVectorization(
 
 # Make a text-only dataset (without labels), then call `TextVectorization.adapt`.
 train_text = raw_train_ds.map(lambda text, labels: text)
-binary_vectorize_layer.adapt(train_text)
 int_vectorize_layer.adapt(train_text)
-
-def binary_vectorize_text(text, label):
-  text = tf.expand_dims(text, -1)
-  return binary_vectorize_layer(text), label
 
 def int_vectorize_text(text, label):
   text = tf.expand_dims(text, -1)
@@ -82,12 +71,12 @@ def create_model(vocab_size, num_labels):
   return model
 
 # `vocab_size` is `VOCAB_SIZE + 1` since `0` is used additionally for padding.
-int_model = create_model(vocab_size=VOCAB_SIZE + 1, num_labels=3)
+int_model = create_model(vocab_size=VOCAB_SIZE + 1, num_labels=NUM_LABELS)
 int_model.compile(
     loss=losses.SparseCategoricalCrossentropy(from_logits=True),
     optimizer='adam',
     metrics=['accuracy'])
-history = int_model.fit(int_train_ds, validation_data=int_val_ds, epochs=5)
+history = int_model.fit(int_train_ds, validation_data=int_val_ds, epochs=50)
 
 
 # print("Linear model on binary vectorized data:")

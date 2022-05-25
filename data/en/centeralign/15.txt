@@ -1,0 +1,1 @@
+centre align the first word of selected paragraph

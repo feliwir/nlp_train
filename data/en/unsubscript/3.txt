@@ -1,0 +1,1 @@
+remove subscript from last character

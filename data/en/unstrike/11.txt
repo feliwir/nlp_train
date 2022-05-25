@@ -1,0 +1,1 @@
+undo strikethrough for last two characters

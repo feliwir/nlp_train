@@ -1,0 +1,1 @@
+remove bold for the selected text

@@ -1,0 +1,1 @@
+remove underline for the last two characters

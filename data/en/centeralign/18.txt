@@ -1,0 +1,1 @@
+centre align the last word of selected paragraph
